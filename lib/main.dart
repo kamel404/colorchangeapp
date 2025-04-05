@@ -61,4 +61,49 @@ class _ColorChangerScreenState extends State<ColorChangerScreen> {
       _directionIndex = (_directionIndex + 1) % _directions.length;
     });
   }
+
+  @override
+  Widget build(BuildContext context) {
+    // Extract current gradient directions
+    final currentDirection = _directions[_directionIndex];
+
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: currentDirection['begin']!,
+            end: currentDirection['end']!,
+            colors: [
+              _color,
+              Colors.white,
+            ], // You can adjust the gradient colors as needed
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // Display the RGB values
+              Text(
+                'R: ${_color.r}, G: ${_color.g}, B: ${_color.b}',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              // Change Color Button
+              ElevatedButton(
+                onPressed: _changeColor,
+                child: Text('Change Color'),
+              ),
+              SizedBox(height: 10),
+              // Change Direction Button
+              ElevatedButton(
+                onPressed: _changeDirection,
+                child: Text('Change Direction'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
