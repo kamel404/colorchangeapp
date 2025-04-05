@@ -1,18 +1,17 @@
-// ignore_for_file: unused_import
-
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-void main() {
-  runApp(const ColorChangerApp());
-}
+void main() => runApp(const ColorChangerApp());
 
 class ColorChangerApp extends StatelessWidget {
   const ColorChangerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Color Changer', home: ColorChangerScreen());
+    return const MaterialApp(
+      title: 'Color Changer',
+      home: ColorChangerScreen(),
+    );
   }
 }
 
@@ -24,26 +23,31 @@ class ColorChangerScreen extends StatefulWidget {
 }
 
 class _ColorChangerScreenState extends State<ColorChangerScreen> {
-  // Default random color
+  // Current background color (starts with blue)
   Color _color = Colors.blue;
 
-  // List of gradient directions represented by begin and end alignments
-  final List<Map<String, Alignment>> _directions = [
-    {'begin': Alignment.topCenter, 'end': Alignment.bottomCenter}, // Vertical
-    {'begin': Alignment.centerLeft, 'end': Alignment.centerRight}, // Horizontal
-    {
-      'begin': Alignment.topLeft,
-      'end': Alignment.bottomRight,
-    }, // Left-to-Right Diagonal
-    {
-      'begin': Alignment.topRight,
-      'end': Alignment.bottomLeft,
-    }, // Right-to-Left Diagonal
+  // All possible gradient directions with labels
+  final List<GradientDirection> _gradientOptions = [
+    GradientDirection(Alignment.topCenter, Alignment.bottomCenter, 'Vertical'),
+    GradientDirection(
+      Alignment.centerLeft,
+      Alignment.centerRight,
+      'Horizontal',
+    ),
+    GradientDirection(
+      Alignment.topLeft,
+      Alignment.bottomRight,
+      'Left-to-Right',
+    ),
+    GradientDirection(
+      Alignment.topRight,
+      Alignment.bottomLeft,
+      'Right-to-Left',
+    ),
   ];
 
-  int _directionIndex = 0;
+  int _currentDirectionIndex = 0;
 
-  // Generate a random color
   void _changeColor() {
     setState(() {
       _color = Color.fromRGBO(
@@ -55,50 +59,54 @@ class _ColorChangerScreenState extends State<ColorChangerScreen> {
     });
   }
 
-  // Cycle to the next gradient direction
   void _changeDirection() {
     setState(() {
-      _directionIndex = (_directionIndex + 1) % _directions.length;
+      _currentDirectionIndex =
+          (_currentDirectionIndex + 1) % _gradientOptions.length;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Extract current gradient directions
-    final currentDirection = _directions[_directionIndex];
+    final currentDirection = _gradientOptions[_currentDirectionIndex];
 
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: currentDirection['begin']!,
-            end: currentDirection['end']!,
-            colors: [
-              _color,
-              Colors.white,
-            ], // You can adjust the gradient colors as needed
+            begin: currentDirection.begin,
+            end: currentDirection.end,
+            colors: [_color, Colors.white],
           ),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // Display the RGB values
-              Text(
-                'R: ${_color.r}, G: ${_color.g}, B: ${_color.b}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              // Change Color Button
+            children: [
               ElevatedButton(
                 onPressed: _changeColor,
-                child: Text('Change Color'),
+                child: const Text('Change Color'),
               ),
-              SizedBox(height: 10),
-              // Change Direction Button
+              const SizedBox(height: 20),
+              Text(
+                'Red: ${_color.red}, Green: ${_color.green}, Blue: ${_color.blue}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _changeDirection,
-                child: Text('Change Direction'),
+                child: const Text('Change Direction'),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Direction: ${currentDirection.label}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -106,4 +114,13 @@ class _ColorChangerScreenState extends State<ColorChangerScreen> {
       ),
     );
   }
+}
+
+// Helper class to store gradient direction information
+class GradientDirection {
+  final Alignment begin;
+  final Alignment end;
+  final String label;
+
+  const GradientDirection(this.begin, this.end, this.label);
 }
