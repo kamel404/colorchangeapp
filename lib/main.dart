@@ -4,70 +4,61 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ColorChangerApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ColorChangerApp extends StatelessWidget {
+  const ColorChangerApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    return MaterialApp(title: 'Color Changer', home: ColorChangerScreen());
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class ColorChangerScreen extends StatefulWidget {
+  const ColorChangerScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ColorChangerScreen> createState() => _ColorChangerScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _ColorChangerScreenState extends State<ColorChangerScreen> {
+  // Default random color
+  Color _color = Colors.blue;
 
-  void _incrementCounter() {
+  // List of gradient directions represented by begin and end alignments
+  final List<Map<String, Alignment>> _directions = [
+    {'begin': Alignment.topCenter, 'end': Alignment.bottomCenter}, // Vertical
+    {'begin': Alignment.centerLeft, 'end': Alignment.centerRight}, // Horizontal
+    {
+      'begin': Alignment.topLeft,
+      'end': Alignment.bottomRight,
+    }, // Left-to-Right Diagonal
+    {
+      'begin': Alignment.topRight,
+      'end': Alignment.bottomLeft,
+    }, // Right-to-Left Diagonal
+  ];
+
+  int _directionIndex = 0;
+
+  // Generate a random color
+  void _changeColor() {
     setState(() {
-      _counter++;
+      _color = Color.fromRGBO(
+        Random().nextInt(256),
+        Random().nextInt(256),
+        Random().nextInt(256),
+        1,
+      );
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
+  // Cycle to the next gradient direction
+  void _changeDirection() {
+    setState(() {
+      _directionIndex = (_directionIndex + 1) % _directions.length;
+    });
   }
 }
